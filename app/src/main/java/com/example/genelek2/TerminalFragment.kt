@@ -229,8 +229,8 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
             val data: ByteArray
             if (hexEnabled) {
                 val sb = StringBuilder()
-                TextUtil.toHexString(sb, byteArrayOf())
-                TextUtil.toHexString(sb, byteArrayOf())
+                TextUtil.toHexString(sb, TextUtil.fromHexString(str))
+                TextUtil.toHexString(sb, newline.toByteArray())
                 msg = sb.toString()
                 data = TextUtil.fromHexString(msg)
             } else {
@@ -255,7 +255,7 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
         val spn = StringBuilder()
         for (data in datas) {
             if (hexEnabled) {
-                spn.append( TextUtil.toHexString(spn ,data) ).append('\n')
+                spn.append(TextUtil.toHexString(data)).append('\n')
             } else {
                 var msg = String(data)
                 if (newline == TextUtil.newline_crlf && msg.length > 0) {
