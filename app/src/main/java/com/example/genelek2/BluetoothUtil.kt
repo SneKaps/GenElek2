@@ -16,11 +16,7 @@ import androidx.fragment.app.Fragment
 //import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 
 
-class BluetoothUtil {
-
-    interface PermissionGrantedCallback {
-        fun call()
-    }
+object BluetoothUtil {
 
     /**
      * sort by name, then address. sort named devices first
@@ -85,7 +81,7 @@ class BluetoothUtil {
 
     fun hasPermissions(
         fragment: Fragment,
-        requestPermissionLauncher: ActivityResultLauncher<String?>,
+        requestPermissionLauncher: ActivityResultLauncher<String>,
     ): Boolean {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
@@ -116,16 +112,16 @@ class BluetoothUtil {
         }
     }
 
-    fun onPermissionsResult(fragment: Fragment, granted: Boolean, cb: PermissionGrantedCallback) {
+    fun onPermissionsResult(fragment: Fragment, granted: Boolean, cb: () -> Unit) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
         val showRationale =
             fragment.shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT)
         if (granted) {
-            cb.call()
+            cb.invoke()
         } else if (showRationale) {
             showRationaleDialog(
                 fragment
-            ) { dialog: DialogInterface?, which: Int -> cb.call() }
+            ) { dialog: DialogInterface?, which: Int -> cb.invoke() }
         } else {
             showSettingsDialog(fragment)
         }

@@ -104,7 +104,7 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
     }
 
     override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-        service = (binder as SerialService.SerialBinder).getService()
+        service = (binder as SerialService.SerialBinder).service
         service!!.attach(this)
         if (initialStart && isResumed) {
             initialStart = false
@@ -210,7 +210,7 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
             val socket = SerialSocket(requireActivity().applicationContext, device)
             service!!.connect(socket)
         } catch (e: Exception) {
-            onSerialConnectError(e)
+            onSerialConnectionError(e)
         }
     }
 
@@ -247,7 +247,7 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
             receiveText!!.append(spn)
             service!!.write(data)
         } catch (e: Exception) {
-            onSerialIoError(e)
+            onSerialIOError(e)
         }
     }
 
@@ -313,24 +313,24 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
     /*
      * SerialListener
      */
-    override fun onSerialConnect() {
+    override fun onSerialConnected() {
         status("connected")
         connected = Connected.True
     }
 
-    override fun onSerialConnectError(e: Exception?) {
+    override fun onSerialConnectionError(e: Exception?) {
         TODO("Not yet implemented")
     }
 
-    override fun onSerialRead(data: ByteArray?) {
+    override fun onSerialDataRead(data: ByteArray?) {
         TODO("Not yet implemented")
     }
 
-    override fun onSerialRead(datas: ArrayDeque<ByteArray?>?) {
+    override fun onSerialDatasRead(datas: ArrayDeque<ByteArray?>?) {
         TODO("Not yet implemented")
     }
 
-    override fun onSerialIoError(e: Exception?) {
+    override fun onSerialIOError(e: Exception?) {
         TODO("Not yet implemented")
     }
 

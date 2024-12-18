@@ -36,7 +36,7 @@ class DevicesFragment : ListFragment() {
         setHasOptionsMenu(true)
         if (requireActivity().packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) bluetoothAdapter =
             BluetoothAdapter.getDefaultAdapter()
-        listAdapter = object : ArrayAdapter<BluetoothDevice?>(requireActivity(), 0, listItems) {
+        listAdapter = object : ArrayAdapter<BluetoothDevice>(requireActivity(), 0, listItems) {
             override fun getView(position: Int, view: View?, parent: ViewGroup): View {
                 var view = view
                 val device = listItems[position]
@@ -55,8 +55,10 @@ class DevicesFragment : ListFragment() {
         ) { granted: Boolean? ->
             BluetoothUtil.onPermissionsResult(
                 this,
-                granted
-            ) { this.refresh() }
+                granted ?: false
+            ) {
+                this.refresh()
+            }
         }
     }
 

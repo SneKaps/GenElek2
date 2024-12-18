@@ -3,9 +3,9 @@ package com.example.genelek2
 import java.util.ArrayDeque
 
 interface SerialListener {
-    fun onSerialConnect()
-    fun onSerialConnectError(e: Exception?)
-    fun onSerialRead(data: ByteArray?) // socket -> service
-    fun onSerialRead(datas: ArrayDeque<ByteArray?>?) // service -> UI thread
-    fun onSerialIoError(e: Exception?)
+    fun onSerialConnected()
+    fun onSerialConnectionError(e: Exception?)
+    fun onSerialDataRead(data: ByteArray?) // socket -> service
+    fun onSerialDatasRead(datas: ArrayDeque<ByteArray?>?) // service -> UI thread
+    fun onSerialIOError(e: Exception?)
 }

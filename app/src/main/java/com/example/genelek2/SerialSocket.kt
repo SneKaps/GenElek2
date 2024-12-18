@@ -29,7 +29,7 @@ class SerialSocket(context: Context, device: BluetoothDevice) : Runnable {
         this.device = device
         disconnectBroadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                if (listener != null) listener!!.onSerialIoError(IOException("background disconnect"))
+                if (listener != null) listener!!.onSerialIOError(IOException("background disconnect"))
                 disconnect() // disconnect now, else would be queued until UI re-attached
             }
         }
@@ -81,9 +81,9 @@ class SerialSocket(context: Context, device: BluetoothDevice) : Runnable {
         try {
             socket = device.createRfcommSocketToServiceRecord(BLUETOOTH_SPP)
             socket?.connect()
-            if (listener != null) listener!!.onSerialConnect()
+            if (listener != null) listener!!.onSerialConnected()
         } catch (e: Exception) {
-            if (listener != null) listener!!.onSerialConnectError(e)
+            if (listener != null) listener!!.onSerialConnectionError(e)
             try {
                 socket!!.close()
             } catch (ignored: Exception) {
@@ -98,11 +98,11 @@ class SerialSocket(context: Context, device: BluetoothDevice) : Runnable {
             while (true) {
                 len = socket?.inputStream!!.read(buffer)
                 val data = buffer.copyOf(len)
-                if (listener != null) listener!!.onSerialRead(data)
+                if (listener != null) listener!!.onSerialDataRead(data)
             }
         } catch (e: Exception) {
             connected = false
-            if (listener != null) listener!!.onSerialIoError(e)
+            if (listener != null) listener!!.onSerialIOError(e)
             try {
                 socket?.close()
             } catch (ignored: Exception) {

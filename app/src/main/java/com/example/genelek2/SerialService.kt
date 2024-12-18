@@ -120,18 +120,18 @@ class SerialService : Service(), SerialListener {
         }
         for (item in queue1) {
             when (item.type) {
-                QueueType.Connect -> listener.onSerialConnect()
-                QueueType.ConnectError -> listener.onSerialConnectError(item.e)
-                QueueType.Read -> listener.onSerialRead(item.datas)
-                QueueType.IoError -> listener.onSerialIoError(item.e)
+                QueueType.Connect -> listener.onSerialConnected()
+                QueueType.ConnectError -> listener.onSerialConnectionError(item.e)
+                QueueType.Read -> listener.onSerialDatasRead(item.datas)
+                QueueType.IoError -> listener.onSerialIOError(item.e)
             }
         }
         for (item in queue2) {
             when (item.type) {
-                QueueType.Connect -> listener.onSerialConnect()
-                QueueType.ConnectError -> listener.onSerialConnectError(item.e)
-                QueueType.Read -> listener.onSerialRead(item.datas)
-                QueueType.IoError -> listener.onSerialIoError(item.e)
+                QueueType.Connect -> listener.onSerialConnected()
+                QueueType.ConnectError -> listener.onSerialConnectionError(item.e)
+                QueueType.Read -> listener.onSerialDatasRead(item.datas)
+                QueueType.IoError -> listener.onSerialIOError(item.e)
             }
         }
         queue1.clear()
@@ -190,7 +190,7 @@ class SerialService : Service(), SerialListener {
                 .setColor(resources.getColor(R.color.colorPrimary))
                 .setContentTitle(resources.getString(R.string.app_name))
                 .setContentText(if (socket != null) {
-                    "Connected to " + socket.getName()
+                    "Connected to " + socket?.name
                 } else "Background Service")
                 .setContentIntent(restartPendingIntent)
                 .setOngoing(true)
@@ -215,13 +215,13 @@ class SerialService : Service(), SerialListener {
     /**
      * SerialListener
      */
-    override fun onSerialConnect() {
+    override fun onSerialConnected() {
         if (connected) {
             synchronized(this) {
                 if (listener != null) {
                     mainLooper.post {
                         if (listener != null) {
-                            listener!!.onSerialConnect()
+                            listener!!.onSerialConnected()
                         } else {
                             queue1.add(QueueItem(QueueType.Connect))
                         }
@@ -233,13 +233,13 @@ class SerialService : Service(), SerialListener {
         }
     }
 
-    override fun onSerialConnectError(e: Exception?) {
+    override fun onSerialConnectionError(e: Exception?) {
         if (connected) {
             synchronized(this) {
                 if (listener != null) {
                     mainLooper.post {
                         if (listener != null) {
-                            listener!!.onSerialConnectError(e)
+                            listener!!.onSerialConnectionError(e)
                         } else {
                             queue1.add(QueueItem(QueueType.ConnectError, e))
                             disconnect()
@@ -253,7 +253,7 @@ class SerialService : Service(), SerialListener {
         }
     }
 
-    override fun onSerialRead(datas: ArrayDeque<ByteArray?>?) {
+    override fun onSerialDatasRead(datas: ArrayDeque<ByteArray?>?) {
         throw UnsupportedOperationException()
     }
 
@@ -265,7 +265,7 @@ class SerialService : Service(), SerialListener {
      * On new data inform UI thread once (1).
      * While not consumed (2), add more data (3).
      */
-    override fun onSerialRead(data: ByteArray?) {
+    override fun onSerialDataRead(data: ByteArray?) {
         if (connected) {
             synchronized(this) {
                 if (listener != null) {
@@ -282,7 +282,7 @@ class SerialService : Service(), SerialListener {
                                 lastRead.init() // (2)
                             }
                             if (listener != null) {
-                                listener!!.onSerialRead(datas)
+                                listener!!.onSerialDatasRead(datas)
                             } else {
                                 queue1.add(QueueItem(QueueType.Read, datas))
                             }
@@ -298,13 +298,13 @@ class SerialService : Service(), SerialListener {
         }
     }
 
-    override fun onSerialIoError(e: Exception?) {
+    override fun onSerialIOError(e: Exception?) {
         if (connected) {
             synchronized(this) {
                 if (listener != null) {
                     mainLooper.post {
                         if (listener != null) {
-                            listener!!.onSerialIoError(e)
+                            listener!!.onSerialIOError(e)
                         } else {
                             queue1.add(QueueItem(QueueType.IoError, e))
                             disconnect()
