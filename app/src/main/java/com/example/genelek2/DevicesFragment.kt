@@ -27,7 +27,7 @@ class DevicesFragment : ListFragment() {
     private var bluetoothAdapter: BluetoothAdapter? = null
     private val listItems = ArrayList<BluetoothDevice>()
     private var listAdapter: ArrayAdapter<BluetoothDevice>? = null
-    var requestBluetoothPermissionLauncherForRefresh: ActivityResultLauncher<String>? = null
+    lateinit var requestBluetoothPermissionLauncherForRefresh: ActivityResultLauncher<String>
     private var menu: Menu? = null
     private var permissionMissing = false
 
@@ -87,36 +87,20 @@ class DevicesFragment : ListFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        if (id == R.id.bt_refresh) {
-            requestBluetoothPermissionLauncherForRefresh?.let { launcher ->
-                if (BluetoothUtil.hasPermissions(this, launcher)) refresh()
-            }
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    /*
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
         if (id == R.id.bt_settings) {
             val intent = Intent()
             intent.setAction(Settings.ACTION_BLUETOOTH_SETTINGS)
             startActivity(intent)
             return true
         } else if (id == R.id.bt_refresh) {
-            if (BluetoothUtil.hasPermissions(
-                    this,
-                    requestBluetoothPermissionLauncherForRefresh
-                )
-            ) refresh()
+            if (BluetoothUtil.hasPermissions(this, requestBluetoothPermissionLauncherForRefresh)) {
+                refresh()
+            }
             return true
         } else {
             return super.onOptionsItemSelected(item)
         }
     }
-
-     */
 
     @SuppressLint("MissingPermission")
     fun refresh() {

@@ -70,9 +70,7 @@ object BluetoothUtil {
             fragment.startActivity(
                 Intent(
                     Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                    //Uri.parse("package:" + BuildConfig.APPLICATION_ID)
-                    //Uri.parse("package:" + BuildConfig.com.example.genelek2)
-                    Uri.parse("package:" + fragment.context)
+                    Uri.parse("package:" + BuildConfig.APPLICATION_ID)
                 )
             )
         }
@@ -83,10 +81,7 @@ object BluetoothUtil {
         fragment: Fragment,
         requestPermissionLauncher: ActivityResultLauncher<String>,
     ): Boolean {
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
-
-        val context = fragment.activity ?: false
 
         val missingPermissions =
             fragment.requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
