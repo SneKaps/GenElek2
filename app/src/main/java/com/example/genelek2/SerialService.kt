@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import java.io.IOException
 import java.util.ArrayDeque
 
+
 class SerialService : Service(), SerialListener {
     internal inner class SerialBinder : Binder() {
         val service: SerialService
@@ -257,14 +258,7 @@ class SerialService : Service(), SerialListener {
         throw UnsupportedOperationException()
     }
 
-    /**
-     * reduce number of UI updates by merging data chunks.
-     * Data can arrive at hundred chunks per second, but the UI can only
-     * perform a dozen updates if receiveText already contains much text.
-     *
-     * On new data inform UI thread once (1).
-     * While not consumed (2), add more data (3).
-     */
+
     override fun onSerialDataRead(data: ByteArray?) {
         if (connected) {
             synchronized(this) {
@@ -316,5 +310,21 @@ class SerialService : Service(), SerialListener {
                 }
             }
         }
+    }
+
+    override fun onSerialRead(data: ByteArray) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onSerialIoError(e: Exception) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onSerialConnectError(e: Exception) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onSerialConnect() {
+        //TODO("Not yet implemented")
     }
 }

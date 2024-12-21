@@ -10,7 +10,10 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import java.io.ByteArrayOutputStream
 
+
+
 object TextUtil {
+
 
     @ColorInt
     var caretBackground: Int = 0xff666666.toInt()
@@ -50,10 +53,12 @@ object TextUtil {
         return buf.toByteArray()
     }
 
+    //returns the hexadecimal string representation of byte array
     fun toHexString(buf: ByteArray): String {
         return toHexString(buf, 0, buf.size)
     }
 
+    //creates a StringBuilder to hold the resulting hexadecimal string
     fun toHexString(buf: ByteArray, begin: Int, end: Int): String {
         val sb = StringBuilder(3 * (end - begin))
         toHexString(sb, buf, begin, end)
@@ -64,6 +69,7 @@ object TextUtil {
         toHexString(sb, buf, 0, buf.size)
     }
 
+    //conversion from bytes to hex
     fun toHexString(sb: StringBuilder, buf: ByteArray, begin: Int, end: Int) {
         for (pos in begin until end) {
             if (sb.isNotEmpty()) sb.append(' ')
@@ -75,9 +81,7 @@ object TextUtil {
         }
     }
 
-    /**
-     * use https://en.wikipedia.org/wiki/Caret_notation to avoid invisible control characters
-     */
+
     fun toCaretString(s: CharSequence, keepNewline: Boolean): CharSequence {
         return toCaretString(s, keepNewline, s.length)
     }
@@ -153,3 +157,4 @@ object TextUtil {
         }
     }
 }
+
