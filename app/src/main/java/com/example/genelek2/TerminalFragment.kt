@@ -42,8 +42,8 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
     private var deviceAddress: String? = null
     private var service: SerialService? = null
 
-    private var receiveText: TextView? = null
-    private var sendText: TextView? = null
+    private lateinit var receiveText: TextView
+    private lateinit var sendText: TextView
     private var hexWatcher: TextUtil.HexWatcher? = null
 
     private var connected = Connected.False
@@ -129,23 +129,23 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         val view: View = inflater.inflate(R.layout.fragment_terminal, container, false)
         receiveText =
             view.findViewById(R.id.receive_text) // TextView performance decreases with number of spans
-        receiveText?.setTextColor(resources.getColor(R.color.colorRecieveText)) // set as default color to reduce number of spans
-        receiveText?.setMovementMethod(ScrollingMovementMethod.getInstance())
+        receiveText.setTextColor(resources.getColor(R.color.colorRecieveText)) // set as default color to reduce number of spans
+        receiveText.setMovementMethod(ScrollingMovementMethod.getInstance())
 
         sendText = view.findViewById<TextView>(R.id.send_text)
-        hexWatcher = TextUtil.HexWatcher(sendText!!)
+        hexWatcher = TextUtil.HexWatcher(sendText)
         hexWatcher?.enable(hexEnabled)
-        sendText?.addTextChangedListener(hexWatcher)
-        sendText?.setHint(if (hexEnabled) "HEX mode" else "")
+        sendText.addTextChangedListener(hexWatcher)
+        sendText.setHint(if (hexEnabled) "HEX mode" else "")
 
         val sendBtn = view.findViewById<View>(R.id.send_btn)
         sendBtn.setOnClickListener { v: View? ->
             send(
-                sendText?.getText().toString()
+                sendText.getText().toString()
             )
         }
         return view
@@ -266,7 +266,7 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             Log.d("SendFunction", "Formatted text appended to receiveText")
-            receiveText?.append(spn)
+            receiveText.append(spn)
 
             Log.d("SendFunction", "Calling service?.write with data: ${data.contentToString()}")
             service?.write(data)
@@ -378,31 +378,30 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
 
     override fun onSerialConnectionError(e: Exception?) {
         //TODO("Not yet implemented")
-        /*
+
         if (e != null) {
             status("connection failed: " + e.message)
         }
         disconnect()
 
-         */
     }
 
     override fun onSerialDataRead(data: ByteArray?) {
         //TODO("Not yet implemented")
-        /*
+
         val datas = ArrayDeque<ByteArray>()
         datas.add(data)
         receive(datas)
 
-         */
     }
 
     override fun onSerialDatasRead(datas: ArrayDeque<ByteArray?>?) {
         //TODO("Not yet implemented")
-        /*
-        receive(datas)
-
-         */
+        val received: ArrayDeque<ByteArray> = datas?.filterNotNull()?.let { ArrayDeque(it) } ?: ArrayDeque()
+        receive(received)
+        //val receivedData = datas?.filterNotNull()
+        //receivedData?.let { receive(it) }
+        //receive(datas)
     }
 
     override fun onSerialIOError(e: Exception?) {
